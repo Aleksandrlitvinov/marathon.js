@@ -19,9 +19,10 @@ const player2 = {
   }
 }
 
+const arenas = document.querySelector('.arenas')
+
 
 function createPlayer(style, player) {
-  const arenas = document.querySelector('.arenas')
 
   let div = document.createElement('div')
   div.classList.add(style)
