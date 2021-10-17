@@ -62,13 +62,16 @@ function createElement(tag, className){
 }
 
 function changeHP(player) {
-  const randomizer = Math.ceil(Math.random() * 20)
   const $playerLife = document.querySelector(`.player${player.player} .life`)
-  player.hp -= randomizer
+  player.hp -= randomizer()
   if(player.hp <= 0){
     player.hp = 0
   }
   $playerLife.style.width = player.hp + '%'
+}
+
+function randomizer(){
+  return Math.ceil(Math.random() * 20)
 }
 
 function playerWin(name){
