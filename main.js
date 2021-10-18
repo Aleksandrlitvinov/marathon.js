@@ -8,8 +8,11 @@ const player1 = {
   weapon: [],
   player: 1,
   attack: function () {
-    console.log(`${player1.name} Fight...`);
-  }
+    console.log(`${player1.name} Fight...`)
+  },
+  changeHP: changeHP,
+  elHP: elHP,
+  renderHP: renderHP
 }
 
 const player2 = {
@@ -20,7 +23,18 @@ const player2 = {
   player: 2,
   attack: function () {
     console.log(`${player2.name} Fight...`);
+  },
+  changeHP: changeHP,
+  elHP: elHP,
+  renderHP: renderHP
+}
+
+function createElement(tag, className){
+  const $tag = document.createElement(tag)
+  if(className){
+    $tag.classList.add(className)
   }
+  return $tag
 }
 
 function createPlayer(playerObj) {
@@ -44,61 +58,79 @@ function createPlayer(playerObj) {
   return $player
 }
 
+function showResultText(name){
+  const $winTitle = createElement('div', 'loseTitle')
+  if(name){
+    $winTitle.innerText = `${name} wins!`
+  }else $winTitle.innerText = `draw`
+  return $winTitle
+}
+
+function getRandom(num){
+  let randomNum = Math.ceil(Math.random() * num)
+  return randomNum
+}
+
+function changeHP(randomNum) {
+  this.hp -= randomNum
+  if (this.hp <= 0) {
+    this.hp = 0
+  }
+}
+
+function elHP(){
+  return  document.querySelector(`.player${this.player} .life`)
+}
+
+function renderHP(){
+  this.elHP().style.width = this.hp + '%'
+}
+
+function createReloadButton(){
+  const $reload = createElement('div', 'reloadWrap')
+  const $reloadButton = createElement('button', 'button')
+  $reloadButton.innerText = 'Restart'
+  $arenas.append($reload)
+  $reload.append($reloadButton)
+  $reloadButton.addEventListener('click', function (){
+    window.location.reload()
+  })
+}
+
+$randomButton.addEventListener('click', function (){
+  player1.changeHP(getRandom(20))
+  player2.changeHP(getRandom(20))
+  player1.elHP()
+  player2.elHP()
+  player1.renderHP()
+  player2.renderHP()
+
+  if(player1.hp === 0 || player2.hp === 0){
+    $randomButton.disabled = true
+  }
+  if(player1.hp === 0 && player1.hp < player2.hp) {
+    $arenas.append(showResultText(player2.name))
+    createReloadButton()
+  }else if(player2.hp === 0 && player2.hp < player1.hp){
+    $arenas.append(showResultText(player1.name))
+    createReloadButton()
+  }else if(player2.hp === 0 && player2.hp ===0){
+    $arenas.append(showResultText())
+    createReloadButton()
+  }
+})
+
+
+
 $arenas.append(createPlayer(player1))
 $arenas.append(createPlayer(player2))
 
-$randomButton.addEventListener('click', function (){
-  changeHP(player1)
-  changeHP(player2)
-  whoWin()
-})
 
-function createElement(tag, className){
-  const $tag = document.createElement(tag)
-  if(className){
-    $tag.classList.add(className)
-  }
-  return $tag
-}
 
-function changeHP(player) {
-  const $playerLife = document.querySelector(`.player${player.player} .life`)
-  player.hp -= randomizer()
-  if(player.hp <= 0){
-    player.hp = 0
-  }
-  $playerLife.style.width = player.hp + '%'
-}
 
-function randomizer(){
-  return Math.ceil(Math.random() * 20)
-}
 
-function playerWin(name){
-  const $winTitle = createElement('div', 'loseTitle')
-  $winTitle.innerText = `${name} wins!`
-  return $winTitle
-}
-function draw(){
-  const $drawTitle = createElement('div', 'loseTitle')
-  $drawTitle.innerText = `draw !`
-  return $drawTitle
-}
 
-function whoWin(){
-  if(player1.hp <= 0 && player2.hp <= 0){
-    player1.hp = 0
-    player2.hp = 0
-    $randomButton.disabled = true
-    $arenas.append(draw())
-  }
-  else if(player1.hp <= 0) {
-    player1.hp = 0
-    $randomButton.disabled = true
-    $arenas.append(playerWin(player2.name))
-  }else if(player2.hp <= 0){
-    player2.hp = 0
-    $randomButton.disabled = true
-    $arenas.append(playerWin(player1.name))
-  }
-}
+
+
+
+
