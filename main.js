@@ -1,5 +1,17 @@
 const $arenas = document.querySelector('.arenas')
-const $randomButton = document.querySelector('button')
+$randomButton = document.querySelector('button')
+const $formFight = document.querySelector('.control')
+const HIT = {
+  head: 30,
+  body: 25,
+  foot: 20,
+}
+
+const ATTACK = [
+  'head',
+  'body',
+  'foot'
+]
 
 const player1 = {
   name: 'Scorpion',
@@ -10,9 +22,9 @@ const player1 = {
   attack: function () {
     console.log(`${player1.name} Fight...`)
   },
-  changeHP: changeHP,
-  elHP: elHP,
-  renderHP: renderHP
+  changeHP,
+  elHP,
+  renderHP,
 }
 
 const player2 = {
@@ -24,9 +36,9 @@ const player2 = {
   attack: function () {
     console.log(`${player2.name} Fight...`);
   },
-  changeHP: changeHP,
-  elHP: elHP,
-  renderHP: renderHP
+  changeHP,
+  elHP,
+  renderHP,
 }
 
 function createElement(tag, className){
@@ -97,27 +109,52 @@ function createReloadButton(){
   })
 }
 
-$randomButton.addEventListener('click', function (){
-  player1.changeHP(getRandom(20))
-  player2.changeHP(getRandom(20))
-  player1.renderHP()
-  player2.renderHP()
+function enemyAttack(){
+  const hit = ATTACK[getRandom(3)-1]
+  const defence = ATTACK[getRandom(3)-1]
+  return {
+    value: getRandom(HIT[hit]),
+    hit,
+    defence,
+  }
+}
+
+$formFight.addEventListener('submit', function (e){
+  e.preventDefault()
+  const enemy = enemyAttack()
+  const attack = {};
+  for (item of $formFight){
+    if(item.checked && item.name === 'hit'){
+      attack.value = getRandom(HIT[item.value])
+      attack.hit = item.value
+    }
+    if (item.checked && item.name === 'defence'){
+      attack.defence = item.value
+    }
+  }
+  if (attack.hit !== enemy.defence){
+    player2.changeHP(attack.value)
+    player2.renderHP()
+  }
+  if (enemy.hit !== attack.defence){
+    player1.changeHP(enemy.value)
+    player1.renderHP()
+  }
 
   if(player1.hp === 0 || player2.hp === 0){
     $randomButton.disabled = true
+    createReloadButton()
   }
   if(player1.hp === 0 && player1.hp < player2.hp) {
     $arenas.append(showResultText(player2.name))
-    createReloadButton()
   }else if(player2.hp === 0 && player2.hp < player1.hp){
     $arenas.append(showResultText(player1.name))
-    createReloadButton()
-  }else if(player2.hp === 0 && player2.hp ===0){
+  }else if(player2.hp === 0 && player2.hp === 0){
     $arenas.append(showResultText())
-    createReloadButton()
   }
+  console.log('Scorpio', 'attack: ', attack)
+  console.log('Sonya','enemy: ', enemy)
 })
-
 
 
 $arenas.append(createPlayer(player1))
