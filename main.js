@@ -161,29 +161,41 @@ function getTime(){
 }
 
 function generateLogs(type, player1, player2, value){
-  const textStart = logs['start'].replace(['time'], getTime()).replace('[player1]', player1.name).replace('[player2]', player2.name)
-  const text = logs[type][getRandom(logs[type].length)-1].replace('[playerKick]', player1.name).replace('[playerDefence]', player2.name)
-  const textEnd = logs[type][getRandom(logs[type].length)-1].replace('[playerWins]', player1.hp > player2.hp ? player1.name : player2.name ).replace('[playerLose]', player1.hp < player2.hp ? player1.name : player2.name)
-  const textDraw = logs['draw']
-
-  let el
+  let text = logs[type]
   switch (type) {
     case 'start':
-      el = `<p> ${textStart} </p>`
+      text = text
+        .replace(['time'], getTime())
+        .replace('[player1]', player1.name)
+        .replace('[player2]', player2.name)
+
       break
     case 'hit':
-      el = `<p>${getTime()} ${text} -${value} [${player2.hp}/100]</p>`
+      text = text
+        [getRandom(logs[type].length)-1]
+        .replace('[playerKick]', player1.name)
+        .replace('[playerDefence]', player2.name)
+      text = `${getTime()} ${text} -${value} [${player2.hp}/100] `
       break
     case 'defence':
-      el = `<p>${getTime()} ${text} </p>`
+      text = text
+        [getRandom(logs[type].length)-1]
+        .replace('[playerKick]', player1.name)
+        .replace('[playerDefence]', player2.name)
+      text = `${getTime()} ${text}`
       break
     case 'draw':
-      el = `<p> ${textDraw} </p>`
+      text = `${getTime()} - ${text}`
       break
     case 'end':
-      el = `<p>${getTime()} ${textEnd} </p>`
+      text = text
+        [getRandom(logs[type].length)-1]
+        .replace('[playerWins]', player1.hp > player2.hp ? player1.name : player2.name )
+        .replace('[playerLose]', player1.hp < player2.hp ? player1.name : player2.name)
+      text = `${getTime()} ${text}`
       break
   }
+  const el = `<p> ${text} </p>`
   $chat.insertAdjacentHTML('afterbegin', el)
 }
 
