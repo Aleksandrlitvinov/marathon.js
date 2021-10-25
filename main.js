@@ -1,6 +1,8 @@
 const $arenas = document.querySelector('.arenas')
-$randomButton = document.querySelector('button')
+$randomButton = document.querySelector('.button')
 const $formFight = document.querySelector('.control')
+const $chat = document.querySelector('.chat')
+
 const HIT = {
   head: 30,
   body: 25,
@@ -14,7 +16,7 @@ const ATTACK = [
 ]
 
 const player1 = {
-  name: 'Scorpion',
+  name: 'Liu Kang',
   hp: 100,
   img: 'http://reactmarathon-api.herokuapp.com/assets/liukang.gif',
   weapon: [],
@@ -141,12 +143,63 @@ function showResult(){
   }
   if(player1.hp === 0 && player1.hp < player2.hp) {
     $arenas.append(showResultText(player2.name))
+    generateLogs('end', player1, player2)
   }else if(player2.hp === 0 && player2.hp < player1.hp){
     $arenas.append(showResultText(player1.name))
+    generateLogs('end', player1, player2)
   }else if(player2.hp === 0 && player2.hp === 0){
     $arenas.append(showResultText())
+    generateLogs('draw', player1, player2)
   }
 }
+
+function getTime(){
+  const date = new Date()
+  const normalize = (num) => num.toString().length > 1 ? num : `0${num}`
+  const time = `${normalize(date.getHours())}:${normalize(date.getMinutes())}`
+  return time
+}
+
+function generateLogs(type, player1, player2, value){
+  let text = logs[type]
+  switch (type) {
+    case 'start':
+      text = text
+        .replace(['time'], getTime())
+        .replace('[player1]', player1.name)
+        .replace('[player2]', player2.name)
+
+      break
+    case 'hit':
+      text = text
+        [getRandom(logs[type].length)-1]
+        .replace('[playerKick]', player1.name)
+        .replace('[playerDefence]', player2.name)
+      text = `${getTime()} ${text} -${value} [${player2.hp}/100] `
+      break
+    case 'defence':
+      text = text
+        [getRandom(logs[type].length)-1]
+        .replace('[playerKick]', player1.name)
+        .replace('[playerDefence]', player2.name)
+      text = `${getTime()} ${text}`
+      break
+    case 'draw':
+      text = `${getTime()} - ${text}`
+      break
+    case 'end':
+      text = text
+        [getRandom(logs[type].length)-1]
+        .replace('[playerWins]', player1.hp > player2.hp ? player1.name : player2.name )
+        .replace('[playerLose]', player1.hp < player2.hp ? player1.name : player2.name)
+      text = `${getTime()} ${text}`
+      break
+  }
+  const el = `<p> ${text} </p>`
+  $chat.insertAdjacentHTML('afterbegin', el)
+}
+
+generateLogs('start', player1, player2)
 
 $formFight.addEventListener('submit', function (e){
   e.preventDefault()
@@ -156,10 +209,12 @@ $formFight.addEventListener('submit', function (e){
   if (player.defence !== enemy.hit){
     player1.changeHP(enemy.value)
     player1.renderHP()
+    generateLogs('hit', player2, player1, enemy.value)
   }
   if (enemy.defence !== player.hit){
     player2.changeHP(player.value)
     player2.renderHP()
+    generateLogs('hit', player1, player2, player.value )
   }
   showResult()
 })
