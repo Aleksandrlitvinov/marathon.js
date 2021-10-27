@@ -1,8 +1,8 @@
-import {player1, player2} from "./models.js";
+import {player1, player2} from "./player.js";
 import {generateLogs} from "./logs.js";
 
 export const $arenas = document.querySelector('.arenas')
-const $randomButton = document.querySelector('.button')
+export const $randomButton = document.querySelector('.button')
 
 export const createElement = (tag, className) => {
   const $tag = document.createElement(tag)
