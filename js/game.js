@@ -4,26 +4,25 @@ import {$formFight, playerAttack, enemyAttack} from "./fight.js";
 import {generateLogs} from "./logs.js";
 
 export class Game {
-  createPlayer = (playerObj) => {
-  const{name, hp, player, img }  = playerObj
-  const $player = createElement('div', `player${player}`),
-        $progressbar = createElement('div', 'progressbar'),
-        $character = createElement('div', 'character'),
-        $life = createElement('div', 'life'),
-        $name = createElement('div', 'name'),
-        $img = createElement('img', )
+  createPlayer = ({ name, hp, player, img }) => {
+    const $player = createElement('div', `player${player}`),
+          $progressbar = createElement('div', 'progressbar'),
+          $character = createElement('div', 'character'),
+          $life = createElement('div', 'life'),
+          $name = createElement('div', 'name'),
+          $img = createElement('img', )
 
-  $life.style.width = `${hp}%`
-  $img.src = img
-  $name.innerHTML = name
+    $life.style.width = `${hp}%`
+    $img.src = img
+    $name.innerHTML = name
 
-  $player.append($progressbar)
-  $player.append($character)
-  $progressbar.append($life)
-  $progressbar.append($name)
-  $character.append($img)
+    $player.append($progressbar)
+    $player.append($character)
+    $progressbar.append($life)
+    $progressbar.append($name)
+    $character.append($img)
 
-  return $player
+    return $player
 }
   start = () => {
     $arenas.append(this.createPlayer(player1))

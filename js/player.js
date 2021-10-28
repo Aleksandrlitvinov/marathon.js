@@ -1,10 +1,10 @@
 class Player {
-  constructor(props) {
-    this.name = props.name;
+  constructor({name, weapon, player}) {
+    this.name = name;
     this.hp = 100;
     this.img = `http://reactmarathon-api.herokuapp.com/assets/${this.name}.gif`;
-    this.weapon = props.weapon;
-    this.player = props.player;
+    this.weapon = weapon;
+    this.player = player;
   }
     changeHP = (randomNum) => {
       this.hp -= randomNum
@@ -19,13 +19,13 @@ class Player {
 
 export const player1 = new Player({
   name: 'liukang',
-  weapon: [],
+  weapon: ['knife', 'sword', 'dirk'],
   player: 1,
 })
 
 export const player2 = new Player({
   name: 'sonya',
-  weapon: [],
+  weapon: ['knife', 'gun', 'brass knuckles'],
   player: 2,
 })
 
