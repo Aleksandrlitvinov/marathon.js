@@ -1,55 +1,64 @@
-import {player1, player2} from "./player.js";
-import {$arenas, createElement, showResult} from "./create.js";
-import {$formFight, playerAttack, enemyAttack} from "./fight.js";
+import {Player} from "./player.js";
+import {$arenas, showResult} from "./create.js";
+import {$formFight, enemyAttack} from "./fight.js";
 import {generateLogs} from "./logs.js";
 
+export let player1
+export let player2
+
 export class Game {
-  createPlayer = ({ name, hp, player, img }) => {
-    const $player = createElement('div', `player${player}`),
-          $progressbar = createElement('div', 'progressbar'),
-          $character = createElement('div', 'character'),
-          $life = createElement('div', 'life'),
-          $name = createElement('div', 'name'),
-          $img = createElement('img', )
 
-    $life.style.width = `${hp}%`
-    $img.src = img
-    $name.innerHTML = name
+  getPlayers = async () => {
+    const body = await fetch('https://reactmarathon-api.herokuapp.com/api/mk/players', {method: 'GET'}).then(res => res.json())
+    return body
+  }
 
-    $player.append($progressbar)
-    $player.append($character)
-    $progressbar.append($life)
-    $progressbar.append($name)
-    $character.append($img)
+  fight = async () => {
+    const {player1: {hit: playerHit, defence: playerDefence, value}} = await enemyAttack()
+    const {player2: {hit: enemyHit, defence: enemyDefence, value: enemyValue}} = await enemyAttack()
 
-    return $player
-}
-  start = () => {
-    $arenas.append(this.createPlayer(player1))
-    $arenas.append(this.createPlayer(player2))
+    if (playerDefence !== enemyHit) {
+      player1.changeHP(enemyValue)
+      player1.renderHP()
+      generateLogs('hit', player2, player1, enemyValue)
+    } else {
+      generateLogs('defence', player1, player2)
+    }
+    if (enemyDefence !== playerHit) {
+      player2.changeHP(value)
+      player2.renderHP()
+      generateLogs('hit', player1, player2, value)
+    } else {
+      generateLogs('defence', player2, player1)
+    }
+    showResult()
+  }
+
+  start = async () => {
+    const players = await this.getPlayers()
+
+    const p1 = JSON.parse(localStorage.getItem('player1'))
+    const p2 = await fetch('https://reactmarathon-api.herokuapp.com/api/mk/player/choose', {method: 'GET'}).then(res => res.json())
+
+    player1 = new Player({
+      ...p1,
+      player: 1,
+      rootSelector: 'arenas'
+    })
+    player2 = new Player({
+      ...p2,
+      player: 2,
+      rootSelector: 'arenas'
+    })
+
+    $arenas.append(player1.createPlayer(player1))
+    $arenas.append(player2.createPlayer(player2))
     generateLogs('start', player1, player2)
 
-    $formFight.addEventListener('submit',  (e) => {
+    $formFight.addEventListener('submit', (e) => {
       e.preventDefault()
-      const enemy = enemyAttack()
-      const player = playerAttack()
-
-      if (player.defence !== enemy.hit){
-        player1.changeHP(enemy.value)
-        player1.renderHP()
-        generateLogs('hit', player2, player1, enemy.value)
-      }else {
-        generateLogs('defence', player1, player2)
-      }
-
-      if (enemy.defence !== player.hit){
-        player2.changeHP(player.value)
-        player2.renderHP()
-        generateLogs('hit', player1, player2, player.value )
-      }else {
-        generateLogs('defence', player2, player1)
-      }
-      showResult()
+      this.fight()
     })
   }
+
 }
