@@ -13,11 +13,11 @@ export const Fight = [
 
 export const playerAttack = () => {
   const attack = {};
-  for (let item of $formFight){
-    if(item.checked && item.name === 'hit'){
+  for (let item of $formFight) {
+    if (item.checked && item.name === 'hit') {
       attack.hit = item.value
     }
-    if (item.checked && item.name === 'defence'){
+    if (item.checked && item.name === 'defence') {
       attack.defence = item.value
     }
     item.checked = false
@@ -25,8 +25,8 @@ export const playerAttack = () => {
   return attack
 }
 
-export const enemyAttack = async ({hit, defence} = playerAttack())  => {
-  const body = await fetch('http://reactmarathon-api.herokuapp.com/api/mk/player/fight', {
+export const enemyAttack = async ({ hit, defence } = playerAttack()) => {
+  const body = await fetch('https://reactmarathon-api.herokuapp.com/api/mk/player/fight', {
     method: 'POST',
     body: JSON.stringify({
       hit,
