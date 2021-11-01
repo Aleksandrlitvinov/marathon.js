@@ -7,8 +7,3 @@ export const getTime = () => {
   const time = `${normalize(date.getHours())}:${normalize(date.getMinutes())}`
   return time
 }
-
-
-
-
-

@@ -1,13 +1,11 @@
-import {getRandom} from "./utils.js";
-
 export const $formFight = document.querySelector('.control')
-const HIT = {
+export const HIT = {
   head: 30,
   body: 25,
   foot: 20,
 }
 
-const Fight = [
+export const Fight = [
   'head',
   'body',
   'foot'
@@ -15,12 +13,11 @@ const Fight = [
 
 export const playerAttack = () => {
   const attack = {};
-  for (let item of $formFight){
-    if(item.checked && item.name === 'hit'){
-      attack.value = getRandom(HIT[item.value])
+  for (let item of $formFight) {
+    if (item.checked && item.name === 'hit') {
       attack.hit = item.value
     }
-    if (item.checked && item.name === 'defence'){
+    if (item.checked && item.name === 'defence') {
       attack.defence = item.value
     }
     item.checked = false
@@ -28,12 +25,15 @@ export const playerAttack = () => {
   return attack
 }
 
-export const enemyAttack = () => {
-  const hit = Fight[getRandom(3)-1],
-        defence = Fight[getRandom(3)-1]
-  return {
-    value: getRandom(HIT[hit]),
-    hit,
-    defence,
-  }
+export const enemyAttack = async ({ hit, defence } = playerAttack()) => {
+  const body = await fetch('https://reactmarathon-api.herokuapp.com/api/mk/player/fight', {
+    method: 'POST',
+    body: JSON.stringify({
+      hit,
+      defence,
+    })
+  });
+  const result = await body.json()
+  return result
 }
+
