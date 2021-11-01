@@ -19,7 +19,7 @@ export const createReloadButton = () => {
   $arenas.append($reload)
   $reload.append($reloadButton)
   $reloadButton.addEventListener('click', () => {
-    window.location.pathname = '/index.html'
+    window.location.href = 'index.html'
   })
 }
 
